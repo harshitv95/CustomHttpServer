@@ -45,7 +45,19 @@ public class HttpRequest implements IHttpRequest {
 		requestType = RequestType.from(status[0]);
 		queryString = status[1];
 		versionString = status[2];
-		System.out.println(message);
+
+		int firstIdx;
+
+		for (int i = 1; i < messageLines.length; ++i) {
+			firstIdx = messageLines[i].indexOf(": ");
+			if (firstIdx > -1)
+				headers.put(messageLines[i].substring(0, firstIdx), messageLines[i].substring(firstIdx + 2));
+		}
+		System.out.println("REQUEST TYPE	: " + requestType);
+		System.out.println("QUERY STRING	: " + queryString);
+		System.out.println("VERSION STRING	: " + versionString);
+
+		System.out.println("HEADERS:\n" + headers);
 	}
 
 	@Override
@@ -63,7 +75,7 @@ public class HttpRequest implements IHttpRequest {
 
 		public static RequestType from(String s) {
 			for (RequestType value : values())
-				if (value.equals(s))
+				if (value.name().equals(s))
 					return value;
 			return null;
 		}

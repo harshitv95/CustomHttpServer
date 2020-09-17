@@ -12,10 +12,27 @@ public class ServerFactory {
 		if (constr.getParameterCount() != args.length)
 			return false;
 		Parameter[] params = constr.getParameters();
-		for (int i = 0; i < args.length; i++)
-			if (!params[i].getType().isAssignableFrom(args[i].getClass()))
+		for (int i = 0; i < args.length; i++) {
+			if (!params[i].getType().isAssignableFrom(args[i].getClass())
+					&& !isWrapper(params[i].getType().getSimpleName(), args[i].getClass().getSimpleName()))
 				return false;
+		}
 		return true;
+	}
+
+	private static boolean isWrapper(String type, String wrapper) {
+		switch (type) {
+		case "int":
+			return wrapper.equals("Integer");
+		case "char":
+			return wrapper.equals("CHaracter");
+		case "double":
+			return wrapper.equals("Double");
+		case "long":
+			return wrapper.equals("Long");
+		}
+
+		return false;
 	}
 
 	public static final IServer<?> factory(ServerType server, Object... args) {
@@ -44,4 +61,5 @@ public class ServerFactory {
 					"Failed to instantiate Server of Type [" + server.name() + "] : Invalid arguments", e);
 		}
 	}
+
 }
