@@ -44,6 +44,10 @@ public class ServerFactory {
 					.orElse(null);
 
 			// Initialize the constructor with parameters 'args'
+			if (constr == null)
+				throw new RuntimeException(
+						"Constructor with provided parameters not found, could not instantiate " + server);
+			new Config();
 			return constr.newInstance(args);
 		} catch (InvocationTargetException e) {
 			throw new RuntimeException("Failed to instantiate Server of Type [" + server.name()

@@ -1,9 +1,10 @@
 package com.hvadoda1.server.http;
 
+import java.net.Socket;
+
 import com.hvadoda1.server.IClientMeta;
-import com.hvadoda1.server.IResponse;
 import com.hvadoda1.server.IServerListener;
 
-public interface IHttpServerListener extends IServerListener<IClientMeta, IHttpRequest, IResponse> {
+public interface IHttpServerListener extends IServerListener<IClientMeta<Socket>, IHttpRequest, IHttpResponse> {
 
 }

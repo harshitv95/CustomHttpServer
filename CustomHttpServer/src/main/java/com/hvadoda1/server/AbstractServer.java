@@ -7,7 +7,7 @@ import java.util.Set;
 
 import com.hvadoda1.utils.ThreadPool;
 
-public abstract class AbstractServer<CLIENT, CLMETA extends IClientMeta, LIS extends IServerListener<CLMETA, REQ, RESP>, REQ extends IRequest, RESP extends IResponse>
+public abstract class AbstractServer<CLIENT, CLMETA extends IClientMeta<CLIENT>, LIS extends IServerListener<CLMETA, REQ, RESP>, REQ extends IRequest, RESP extends IResponse>
 		implements IServer<LIS>, Closeable {
 
 	protected final Set<LIS> listeners = new HashSet<>();
@@ -31,18 +31,23 @@ public abstract class AbstractServer<CLIENT, CLMETA extends IClientMeta, LIS ext
 
 	protected abstract CLMETA createClientMeta(CLIENT c);
 
-	protected abstract REQ createRequest(CLIENT c) throws IOException;
+	protected abstract REQ createRequest(CLMETA c) throws IOException;
 
-	protected abstract RESP createResponse(CLIENT c) throws IOException;
+	protected abstract RESP createResponse(CLMETA c) throws IOException;
 
-	protected void onRequest(CLMETA client, REQ request, RESP response) throws InterruptedException {
+	protected void onRequest(CLMETA client, REQ request, RESP response) throws InterruptedException, IOException {
 		threads.get(() -> listeners.forEach(l -> {
 			try {
 				l.onRequest(client, request, response);
+				client.close();
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
 		}));
+	}
+
+	protected void onRequest(CLMETA client) throws InterruptedException, IOException {
+		onRequest(client, createRequest(client), createResponse(client));
 	}
 
 	protected void beforeClose() {

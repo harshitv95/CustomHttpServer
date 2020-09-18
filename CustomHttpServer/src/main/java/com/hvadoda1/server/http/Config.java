@@ -1,0 +1,32 @@
+package com.hvadoda1.server.http;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
+public class Config extends com.hvadoda1.server.Config {
+
+	private final static String SERVED_DIR_PREFIX = System.getProperty("user.dir") + File.separatorChar + "www"
+			+ File.separatorChar;
+
+	public Config() {
+		super();
+	}
+
+	@Override
+	protected void initialize() throws FileNotFoundException {
+		if (Files.notExists(Paths.get(SERVED_DIR_PREFIX)))
+			throw new FileNotFoundException(SERVED_DIR_PREFIX);
+		super.initialize();
+	}
+
+	public static String getServedFilePath(String filePath) {
+		return SERVED_DIR_PREFIX + filePath;
+	}
+
+	public static File getServedFile(String filePath) {
+		return new File(getServedFilePath(filePath));
+	}
+
+}

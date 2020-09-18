@@ -31,8 +31,6 @@ public class HttpUtils {
 			add("transfer-encoding");
 			add("upgrade");
 			add("via");
-
-			add("content-length");
 		}
 	};
 

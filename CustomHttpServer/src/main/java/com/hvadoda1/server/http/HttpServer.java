@@ -1,17 +1,18 @@
 package com.hvadoda1.server.http;
 
 import java.io.IOException;
+import java.net.Socket;
 
 import com.hvadoda1.server.AbstractServer;
 import com.hvadoda1.server.IClientMeta;
-import com.hvadoda1.server.IResponse;
 import com.hvadoda1.server.IServerListener;
 import com.hvadoda1.server.tcp.TcpClientMeta;
 import com.hvadoda1.server.tcp.TcpRequest;
 import com.hvadoda1.server.tcp.TcpResponse;
 import com.hvadoda1.server.tcp.TcpServer;
 
-public class HttpServer extends AbstractServer<TcpRequest, IClientMeta, IHttpServerListener, IHttpRequest, IResponse> {
+public class HttpServer
+		extends AbstractServer<Socket, IClientMeta<Socket>, IHttpServerListener, IHttpRequest, IHttpResponse> {
 
 	protected final TcpServer server;
 
@@ -38,7 +39,7 @@ public class HttpServer extends AbstractServer<TcpRequest, IClientMeta, IHttpSer
 			@Override
 			public void onRequest(TcpClientMeta client, TcpRequest request, TcpResponse response)
 					throws InterruptedException, IOException {
-				HttpServer.this.onRequest(client, createRequest(request), response);
+				HttpServer.this.onRequest(client);
 			}
 
 			@Override
@@ -46,11 +47,6 @@ public class HttpServer extends AbstractServer<TcpRequest, IClientMeta, IHttpSer
 				HttpServer.this.beforeClose();
 			}
 		});
-	}
-
-	@Override
-	protected IHttpRequest createRequest(TcpRequest c) throws IOException {
-		return new HttpRequest(c);
 	}
 
 	@Override
@@ -65,14 +61,23 @@ public class HttpServer extends AbstractServer<TcpRequest, IClientMeta, IHttpSer
 	}
 
 	@Override
-	protected IClientMeta createClientMeta(TcpRequest c) {
-		return new TcpClientMeta(c.getClient());
+	protected IClientMeta<Socket> createClientMeta(Socket c) {
+		return new TcpClientMeta(c);
 	}
 
 	@Override
-	protected IResponse createResponse(TcpRequest c) throws IOException {
-//		return new TcpRE
-		return null;
+	protected IHttpRequest createRequest(IClientMeta<Socket> c) throws IOException {
+		return new HttpRequest(c);
+	}
+
+	@Override
+	protected IHttpResponse createResponse(IClientMeta<Socket> c) throws IOException {
+		return new HttpResponse(c.getClient());
+	}
+
+	@Override
+	public void init() {
+		new Config();
 	}
 
 }

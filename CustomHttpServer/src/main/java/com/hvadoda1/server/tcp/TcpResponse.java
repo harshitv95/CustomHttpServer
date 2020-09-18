@@ -18,6 +18,7 @@ public class TcpResponse implements IResponse {
 	@Override
 	public void writeMessage(String message) {
 		pw.print(message);
+		pw.flush();
 	}
 
 }

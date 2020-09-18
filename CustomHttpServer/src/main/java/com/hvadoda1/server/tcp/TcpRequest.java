@@ -24,9 +24,5 @@ public class TcpRequest implements IRequest {
 	public String readMessage() throws IOException {
 		return TcpUtils.readMessage(client, terminator);
 	}
-	
-	public Socket getClient() {
-		return client;
-	}
 
 }

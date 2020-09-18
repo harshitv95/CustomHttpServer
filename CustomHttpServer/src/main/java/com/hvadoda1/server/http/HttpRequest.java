@@ -6,23 +6,23 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import com.hvadoda1.server.tcp.TcpRequest;
+import com.hvadoda1.server.IClientMeta;
 import com.hvadoda1.server.utils.TcpUtils;
 
 public class HttpRequest implements IHttpRequest {
 
 	protected final Map<String, String> headers;
-	protected RequestType requestType;
+	protected HttpRequestType requestType;
 	protected String queryString, versionString;
 	protected final Socket client;
 	protected final Function<String, Boolean> terminatorFn = (line) -> line == null || line.trim().isEmpty();
 
+	public HttpRequest(IClientMeta<Socket> client) throws IOException {
+		this(client.getClient());
+	}
+	
 	public HttpRequest(Socket client) throws IOException {
 		this(client, new HashMap<>());
-	}
-
-	public HttpRequest(TcpRequest req) throws IOException {
-		this(req.getClient());
 	}
 
 	public HttpRequest(Socket client, Map<String, String> headers) throws IOException {
@@ -42,7 +42,7 @@ public class HttpRequest implements IHttpRequest {
 		String status[] = messageLines[0].split("\\s+");
 		if (status.length != 3)
 			return;
-		requestType = RequestType.from(status[0]);
+		requestType = HttpRequestType.from(status[0]);
 		queryString = status[1];
 		versionString = status[2];
 
@@ -70,20 +70,24 @@ public class HttpRequest implements IHttpRequest {
 		return this.headers.get(header);
 	}
 
-	public static enum RequestType {
-		GET, POST, PUT, HEAD, DELETE, OPTION, PATCH;
-
-		public static RequestType from(String s) {
-			for (RequestType value : values())
-				if (value.name().equals(s))
-					return value;
-			return null;
-		}
-	}
-
 	@Override
 	public String readMessage() throws IOException {
 		return "";
+	}
+
+	@Override
+	public String getQueryString() {
+		return this.queryString;
+	}
+
+	@Override
+	public String getVersionString() {
+		return this.versionString;
+	}
+
+	@Override
+	public HttpRequestType getRequestType() {
+		return this.requestType;
 	}
 
 }

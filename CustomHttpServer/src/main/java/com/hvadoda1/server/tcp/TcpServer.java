@@ -5,6 +5,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 import com.hvadoda1.server.AbstractServer;
+import com.hvadoda1.server.Config;
 import com.hvadoda1.server.IServerListener;
 
 public class TcpServer extends
@@ -32,7 +33,7 @@ public class TcpServer extends
 		onStart();
 		while (true) {
 			client = server.accept();
-			onRequest(createClientMeta(client), createRequest(client), createResponse(client));
+			onRequest(createClientMeta(client));
 		}
 	}
 
@@ -48,12 +49,17 @@ public class TcpServer extends
 	}
 
 	@Override
-	protected TcpRequest createRequest(Socket c) throws IOException {
-		return new TcpRequest(c, (String) null);
+	protected TcpRequest createRequest(TcpClientMeta c) throws IOException {
+		return new TcpRequest(c.getClient(), (String) null);
 	}
 
 	@Override
-	protected TcpResponse createResponse(Socket c) throws IOException {
-		return new TcpResponse(c);
+	protected TcpResponse createResponse(TcpClientMeta c) throws IOException {
+		return new TcpResponse(c.getClient());
+	}
+
+	@Override
+	public void init() {
+		new Config();
 	}
 }

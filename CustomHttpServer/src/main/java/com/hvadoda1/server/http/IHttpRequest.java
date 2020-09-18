@@ -8,4 +8,10 @@ public interface IHttpRequest extends IRequest {
 	Map<String, String> getHeaders();
 
 	String getHeader(String header);
+
+	String getQueryString();
+
+	String getVersionString();
+
+	HttpRequestType getRequestType();
 }

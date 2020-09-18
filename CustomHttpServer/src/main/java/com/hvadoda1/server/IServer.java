@@ -13,4 +13,6 @@ public interface IServer<LIS extends IServerListener<?, ?, ?>> {
 	void registerListener(LIS listener);
 
 	void unregisterListener(LIS listener);
+
+	void init();
 }
