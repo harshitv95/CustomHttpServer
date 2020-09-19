@@ -78,7 +78,7 @@ public class HttpResponse extends TcpResponse implements IHttpResponse {
 
 	@Override
 	public void sendResponseLn(String responseLine) {
-		writeMessage(responseLine);
+		writeMessage(responseLine + System.lineSeparator());
 	}
 
 	@Override
