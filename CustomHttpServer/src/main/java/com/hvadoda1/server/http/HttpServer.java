@@ -29,7 +29,7 @@ public class HttpServer
 	}
 
 	protected void registerTcpListeners(TcpServer server) {
-		server.registerListener(new IServerListener<TcpClientMeta, TcpRequest, TcpResponse>() {
+		server.registerListener(new IServerListener<Socket, TcpClientMeta, TcpRequest, TcpResponse>() {
 
 			@Override
 			public void onStart() {

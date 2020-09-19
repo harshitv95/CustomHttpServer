@@ -7,7 +7,7 @@ import java.util.Set;
 
 import com.hvadoda1.utils.ThreadPool;
 
-public abstract class AbstractServer<CLIENT, CLMETA extends IClientMeta<CLIENT>, LIS extends IServerListener<CLMETA, REQ, RESP>, REQ extends IRequest, RESP extends IResponse>
+public abstract class AbstractServer<CLIENT, CLMETA extends IClientMeta<CLIENT>, LIS extends IServerListener<CLIENT, CLMETA, REQ, RESP>, REQ extends IRequest, RESP extends IResponse>
 		implements IServer<LIS>, Closeable {
 
 	protected final Set<LIS> listeners = new HashSet<>();

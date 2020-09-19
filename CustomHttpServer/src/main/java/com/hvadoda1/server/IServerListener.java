@@ -2,7 +2,7 @@ package com.hvadoda1.server;
 
 import java.io.IOException;
 
-public interface IServerListener<CLMETA extends IClientMeta, REQ extends IRequest, RESP extends IResponse> {
+public interface IServerListener<CLIENT, CLMETA extends IClientMeta<CLIENT>, REQ extends IRequest, RESP extends IResponse> {
 	void onStart();
 
 	void beforeClose();

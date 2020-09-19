@@ -9,7 +9,7 @@ import com.hvadoda1.server.Config;
 import com.hvadoda1.server.IServerListener;
 
 public class TcpServer extends
-		AbstractServer<Socket, TcpClientMeta, IServerListener<TcpClientMeta, TcpRequest, TcpResponse>, TcpRequest, TcpResponse> {
+		AbstractServer<Socket, TcpClientMeta, IServerListener<Socket, TcpClientMeta, TcpRequest, TcpResponse>, TcpRequest, TcpResponse> {
 
 	protected final ServerSocket server;
 

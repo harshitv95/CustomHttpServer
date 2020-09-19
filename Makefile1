@@ -1,0 +1,16 @@
+JAVAC=javac
+sources = $(wildcard *.java)
+classes = $(sources:.java=.class)
+
+all: CustomHttpServer
+
+CustomHttpServer: $(classes)
+
+clean :
+    rm -f *.class
+
+%.class : %.java
+    $(JAVAC) $<
+
+jar: $(classes)
+    jar cvf CustomHttpServer.jar $(classes)

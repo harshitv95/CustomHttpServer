@@ -2,7 +2,7 @@ package com.hvadoda1.server;
 
 import java.io.IOException;
 
-public interface IServer<LIS extends IServerListener<?, ?, ?>> {
+public interface IServer<LIS extends IServerListener<?, ?, ?, ?>> {
 
 	/**
 	 * @throws IOException
