@@ -89,8 +89,13 @@ public class HttpResponse extends TcpResponse implements IHttpResponse {
 	@Override
 	public void respondWithFile(File servedFile) throws IOException {
 		setHeader("Content-Type", "text/html");
-		if (!servedFile.exists()) {
+		if (!servedFile.exists() || !servedFile.isFile()) {
 			setStatus(HttpStatus.HTTP_404);
+			sendResponse("");
+			return;
+		}
+		if (!servedFile.canRead()) {
+			setStatus(HttpStatus.HTTP_403);
 			sendResponse("");
 			return;
 		}
