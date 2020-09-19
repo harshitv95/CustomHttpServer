@@ -15,7 +15,10 @@ public class ServerStarter {
 	public static void main(String[] args) throws IOException, InterruptedException {
 
 //		HttpServer server = (HttpServer) ServerFactory.factory(ServerType.HTTP, 80);
-		HttpServer server = new SimpleHttpServer(80);
+		int port = 80;
+		if (args.length > 0)
+			port = Integer.parseInt(args[0]);
+		HttpServer server = new SimpleHttpServer(port);
 //		if (server == null)
 //			return;
 
