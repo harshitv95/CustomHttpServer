@@ -7,8 +7,7 @@ import java.nio.file.Paths;
 
 public class Config extends com.hvadoda1.server.Config {
 
-	private final static String SERVED_DIR_PREFIX = System.getProperty("user.dir") + File.separatorChar + "www"
-			+ File.separatorChar;
+	private final static String SERVED_DIR_PREFIX = com.hvadoda1.server.Config.CURENT_DIR + "www" + File.separator;
 
 	public Config() {
 		super();
@@ -17,7 +16,7 @@ public class Config extends com.hvadoda1.server.Config {
 	@Override
 	protected void initialize() throws FileNotFoundException {
 		if (Files.notExists(Paths.get(SERVED_DIR_PREFIX)))
-			throw new FileNotFoundException(SERVED_DIR_PREFIX);
+			throw new FileNotFoundException("MISSING SERVED DIRECTORY: [" + SERVED_DIR_PREFIX + ']');
 		super.initialize();
 	}
 

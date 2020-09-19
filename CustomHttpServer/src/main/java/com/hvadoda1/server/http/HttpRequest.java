@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import com.hvadoda1.server.IClientMeta;
-import com.hvadoda1.server.utils.TcpUtils;
+import com.hvadoda1.server.util.TcpUtils;
 
 public class HttpRequest implements IHttpRequest {
 

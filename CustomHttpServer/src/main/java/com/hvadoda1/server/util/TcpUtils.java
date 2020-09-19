@@ -1,4 +1,4 @@
-package com.hvadoda1.server.utils;
+package com.hvadoda1.server.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;

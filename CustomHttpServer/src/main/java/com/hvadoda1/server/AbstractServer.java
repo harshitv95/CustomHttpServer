@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.hvadoda1.utils.ThreadPool;
+import com.hvadoda1.util.ThreadPool;
 
 public abstract class AbstractServer<CLIENT, CLMETA extends IClientMeta<CLIENT>, LIS extends IServerListener<CLIENT, CLMETA, REQ, RESP>, REQ extends IRequest, RESP extends IResponse>
 		implements IServer<LIS>, Closeable {

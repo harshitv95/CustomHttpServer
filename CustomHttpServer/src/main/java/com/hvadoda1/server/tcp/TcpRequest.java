@@ -5,7 +5,7 @@ import java.net.Socket;
 import java.util.function.Function;
 
 import com.hvadoda1.server.IRequest;
-import com.hvadoda1.server.utils.TcpUtils;
+import com.hvadoda1.server.util.TcpUtils;
 
 public class TcpRequest implements IRequest {
 	final Socket client;

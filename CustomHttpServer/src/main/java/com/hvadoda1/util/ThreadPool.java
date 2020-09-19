@@ -1,4 +1,4 @@
-package com.hvadoda1.utils;
+package com.hvadoda1.util;
 
 public class ThreadPool {
 

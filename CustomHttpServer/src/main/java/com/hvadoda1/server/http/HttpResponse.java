@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.hvadoda1.server.tcp.TcpResponse;
-import com.hvadoda1.server.utils.HttpUtils;
+import com.hvadoda1.server.util.HttpUtils;
 
 public class HttpResponse extends TcpResponse implements IHttpResponse {
 
