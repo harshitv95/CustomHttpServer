@@ -42,6 +42,8 @@ public class ServerStarter {
 			}
 
 		});
+		
+		server.init();
 
 		server.serve();
 
