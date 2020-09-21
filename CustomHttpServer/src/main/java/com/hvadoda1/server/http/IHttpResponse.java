@@ -28,6 +28,6 @@ public interface IHttpResponse extends IResponse {
 
 	String responseHeaderString();
 
-	void respondWithFile(File sendFile) throws IOException;
+	void respondWithFile(String sendFileName) throws IOException;
 
 }

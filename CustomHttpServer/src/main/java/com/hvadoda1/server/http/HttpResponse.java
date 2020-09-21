@@ -6,16 +6,22 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.Date;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.hvadoda1.server.tcp.TcpResponse;
 import com.hvadoda1.server.util.HttpUtils;
+import com.hvadoda1.server.util.MimeUtils;
+import com.hvadoda1.util.DateTimeUtils;
 
 public class HttpResponse extends TcpResponse implements IHttpResponse {
 
 	protected final Map<String, String> headers = new HashMap<>();
+
+	{
+		headers.put("Server", Config.getServerName());
+	}
 
 	protected HttpStatus status = HttpStatus.HTTP_200;
 
@@ -72,7 +78,7 @@ public class HttpResponse extends TcpResponse implements IHttpResponse {
 
 	@Override
 	public void sendHeaders() {
-		headers.put("Date", new Date().toString());
+		headers.put("Date", DateTimeUtils.getServerTimeString());
 		writeMessage(responseHeaderString());
 	}
 
@@ -87,11 +93,13 @@ public class HttpResponse extends TcpResponse implements IHttpResponse {
 	}
 
 	@Override
-	public void respondWithFile(File servedFile) throws IOException {
-		setHeader("Content-Type", "text/html");
+	public void respondWithFile(String servedFileName) throws IOException {
+		File servedFile = Config.getServedFile(servedFileName);
 		if (!servedFile.exists() || !servedFile.isFile()) {
 			setStatus(HttpStatus.HTTP_404);
-			sendResponse("");
+			setHeader("Content-Type", "text/html");
+			sendResponse("<h1>Not Found</h1><h3>The requested resource \"" + servedFileName
+					+ "\" was not found on this server</h3>");
 			return;
 		}
 		if (!servedFile.canRead()) {
@@ -100,8 +108,8 @@ public class HttpResponse extends TcpResponse implements IHttpResponse {
 			return;
 		}
 
-//		setVersionString(request.getVersionString());
 		setStatus(HttpStatus.HTTP_200);
+		setHeader("Content-Type", MimeUtils.getMimeType(servedFile));
 		headers.put("Content-Length", servedFile.length() + "");
 		sendHeaders();
 

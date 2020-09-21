@@ -53,11 +53,11 @@ public class HttpRequest implements IHttpRequest {
 			if (firstIdx > -1)
 				headers.put(messageLines[i].substring(0, firstIdx), messageLines[i].substring(firstIdx + 2));
 		}
-		System.out.println("REQUEST TYPE	: " + requestType);
-		System.out.println("QUERY STRING	: " + queryString);
-		System.out.println("VERSION STRING	: " + versionString);
+//		System.out.println("REQUEST TYPE	: " + requestType);
+//		System.out.println("QUERY STRING	: " + queryString);
+//		System.out.println("VERSION STRING	: " + versionString);
 
-		System.out.println("HEADERS:\n" + headers);
+//		System.out.println("HEADERS:\n" + headers);
 	}
 
 	@Override

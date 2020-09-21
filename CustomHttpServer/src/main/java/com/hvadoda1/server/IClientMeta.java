@@ -4,9 +4,9 @@ import java.io.Closeable;
 import java.net.InetAddress;
 
 public interface IClientMeta<CLIENT> extends Closeable {
-	String clientHostname();
+	String hostname();
 
-	InetAddress clientIpAddress();
+	InetAddress getInetAddress();
 
 	CLIENT getClient();
 }

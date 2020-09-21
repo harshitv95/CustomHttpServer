@@ -15,12 +15,12 @@ public class TcpClientMeta implements IClientMeta<Socket> {
 	}
 
 	@Override
-	public String clientHostname() {
+	public String hostname() {
 		return client.getInetAddress().getCanonicalHostName();
 	}
 
 	@Override
-	public InetAddress clientIpAddress() {
+	public InetAddress getInetAddress() {
 		return client.getInetAddress();
 	}
 

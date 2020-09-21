@@ -1,5 +1,6 @@
 package com.hvadoda1.util;
 
+import java.io.Closeable;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
@@ -16,7 +17,7 @@ import java.util.Set;
  * @author Harshit Vadodaria
  *
  */
-public class Logger {
+public class Logger implements Closeable {
 
 	protected static Logger instance = null;
 	protected final Level level;

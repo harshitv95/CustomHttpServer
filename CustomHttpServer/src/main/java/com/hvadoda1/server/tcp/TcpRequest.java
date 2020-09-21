@@ -10,11 +10,11 @@ import com.hvadoda1.server.util.TcpUtils;
 public class TcpRequest implements IRequest {
 	final Socket client;
 	protected final Function<String, Boolean> terminator;
+
 	public TcpRequest(final Socket client, String terminator) throws IOException {
-//		this.terminator = terminator;	
 		this(client, (msg) -> msg.equals(terminator));
 	}
-	
+
 	public TcpRequest(final Socket client, Function<String, Boolean> msgTerminatorFn) {
 		this.client = client;
 		this.terminator = msgTerminatorFn;

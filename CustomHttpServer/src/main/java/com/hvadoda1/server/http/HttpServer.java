@@ -1,6 +1,7 @@
 package com.hvadoda1.server.http;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.Socket;
 
 import com.hvadoda1.server.AbstractServer;
@@ -16,15 +17,18 @@ public class HttpServer
 
 	protected final TcpServer server;
 
-	public HttpServer(int port, int maxNumThreads) throws IOException {
-		super(port, 1);
-		server = new TcpServer(port, maxNumThreads);
+
+	public HttpServer(String serverName, int maxNumThreads) throws IOException {
+		super();
+		server = new TcpServer(maxNumThreads);
+		Config.setServerName(serverName);
 		registerTcpListeners(server);
 	}
 
-	public HttpServer(int port) throws IOException {
-		super(port, 1);
-		server = new TcpServer(port);
+	public HttpServer(String serverName) throws IOException {
+		super();
+		server = new TcpServer();
+		Config.setServerName(serverName);
 		registerTcpListeners(server);
 	}
 
@@ -50,8 +54,15 @@ public class HttpServer
 	}
 
 	@Override
-	public void serve() throws IOException, InterruptedException {
-		server.serve();
+	public void serve(int port) throws IOException, InterruptedException {
+		server.serve(port);
+	}
+
+	@Override
+	protected void onRequest(IClientMeta<Socket> client, IHttpRequest request, IHttpResponse response)
+			throws InterruptedException, IOException {
+		if (request.getHeaders().size() > 0)
+			super.onRequest(client, request, response);
 	}
 
 	@Override
@@ -78,6 +89,21 @@ public class HttpServer
 	@Override
 	public void init() {
 		new Config();
+	}
+
+	@Override
+	public int port() {
+		return server.port();
+	}
+
+	@Override
+	public String hostName() {
+		return server.hostName();
+	}
+
+	@Override
+	public InetAddress getInetAddress() {
+		return server.getInetAddress();
 	}
 
 }

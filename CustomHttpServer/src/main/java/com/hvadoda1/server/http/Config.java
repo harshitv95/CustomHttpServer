@@ -9,6 +9,8 @@ public class Config extends com.hvadoda1.server.Config {
 
 	private final static String SERVED_DIR_PREFIX = com.hvadoda1.server.Config.CURENT_DIR + "www" + File.separator;
 
+	private static String serverName;
+
 	public Config() {
 		super();
 	}
@@ -26,6 +28,14 @@ public class Config extends com.hvadoda1.server.Config {
 
 	public static File getServedFile(String filePath) {
 		return new File(getServedFilePath(filePath));
+	}
+
+	public static String getServerName() {
+		return serverName;
+	}
+
+	public static void setServerName(String serverName) {
+		Config.serverName = serverName;
 	}
 
 }

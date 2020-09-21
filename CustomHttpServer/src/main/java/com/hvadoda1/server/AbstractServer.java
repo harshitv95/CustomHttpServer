@@ -11,16 +11,17 @@ public abstract class AbstractServer<CLIENT, CLMETA extends IClientMeta<CLIENT>,
 		implements IServer<LIS>, Closeable {
 
 	protected final Set<LIS> listeners = new HashSet<>();
-	protected final int port;
+	protected int port = 0;
 	protected final ThreadPool threads;
+	protected final boolean isMultiThreaded;
 
-	public AbstractServer(int port) {
-		this(port, 1);
+	public AbstractServer() {
+		this(0);
 	}
 
-	public AbstractServer(int port, int maxNumThreads) {
-		this.port = port;
-		this.threads = new ThreadPool(maxNumThreads);
+	public AbstractServer(int maxNumThreads) {
+		this.isMultiThreaded = maxNumThreads == 0 ? false : true;
+		this.threads = !isMultiThreaded ? null : new ThreadPool(maxNumThreads);
 	}
 
 //	protected abstract void initializeServer();
@@ -36,14 +37,18 @@ public abstract class AbstractServer<CLIENT, CLMETA extends IClientMeta<CLIENT>,
 	protected abstract RESP createResponse(CLMETA c) throws IOException;
 
 	protected void onRequest(CLMETA client, REQ request, RESP response) throws InterruptedException, IOException {
-		threads.get(() -> listeners.forEach(l -> {
+		Runnable r = () -> listeners.forEach(l -> {
 			try {
 				l.onRequest(client, request, response);
 				client.close();
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
-		}));
+		});
+		if (isMultiThreaded)
+			threads.get(r);
+		else
+			r.run();
 	}
 
 	protected void onRequest(CLMETA client) throws InterruptedException, IOException {
