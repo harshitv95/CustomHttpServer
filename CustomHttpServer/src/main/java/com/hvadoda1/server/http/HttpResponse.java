@@ -1,18 +1,14 @@
 package com.hvadoda1.server.http;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.hvadoda1.server.mime.util.MimeUtils;
 import com.hvadoda1.server.tcp.TcpResponse;
 import com.hvadoda1.server.util.HttpUtils;
-import com.hvadoda1.server.util.MimeUtils;
 import com.hvadoda1.util.DateTimeUtils;
 
 public class HttpResponse extends TcpResponse implements IHttpResponse {
@@ -113,11 +109,7 @@ public class HttpResponse extends TcpResponse implements IHttpResponse {
 		headers.put("Content-Length", servedFile.length() + "");
 		sendHeaders();
 
-		try (BufferedReader fr = new BufferedReader(new InputStreamReader(new FileInputStream(servedFile)));) {
-			String line;
-			while ((line = fr.readLine()) != null)
-				sendResponseLn(line);
-		}
+		MimeUtils.writeMimeToOutput(servedFile, getOutputStream());
 
 	}
 
