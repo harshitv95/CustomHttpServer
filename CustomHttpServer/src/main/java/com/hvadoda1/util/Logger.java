@@ -72,8 +72,8 @@ public class Logger implements Closeable {
 
 	public void log(Level level, String msg, Object... args) {
 		if (level.toInt() <= this.level.toInt()) {
-			String logMsg = String.format("[%s][%s] %s %s", new Date(), level, msg,
-					(args == null || args.length == 0) ? "" : "(" + (args.length == 1 ? args[0] : args) + ")");
+			String logMsg = (String.format("[%s][%s] %s %s", new Date(), level, msg,
+					(args == null || args.length == 0) ? "" : "(" + (args.length == 1 ? args[0] : args) + ")")).trim();
 			if (level == Level.ERROR)
 				System.err.println(logMsg);
 			else

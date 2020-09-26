@@ -17,7 +17,6 @@ public class HttpServer
 
 	protected final TcpServer server;
 
-
 	public HttpServer(String serverName, int maxNumThreads) throws IOException {
 		super();
 		server = new TcpServer(maxNumThreads);
@@ -61,7 +60,7 @@ public class HttpServer
 	@Override
 	protected void onRequest(IClientMeta<Socket> client, IHttpRequest request, IHttpResponse response)
 			throws InterruptedException, IOException {
-		if (request.getHeaders().size() > 0)
+		if (request.getQueryString() != null)
 			super.onRequest(client, request, response);
 	}
 

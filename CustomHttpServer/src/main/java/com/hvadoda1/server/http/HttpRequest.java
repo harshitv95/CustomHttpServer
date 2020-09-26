@@ -13,7 +13,7 @@ public class HttpRequest implements IHttpRequest {
 
 	protected final Map<String, String> headers;
 	protected HttpRequestType requestType;
-	protected String queryString, versionString;
+	protected String queryString = null, versionString;
 	protected final Socket client;
 	protected final Function<String, Boolean> terminatorFn = (line) -> line == null || line.trim().isEmpty();
 
@@ -43,7 +43,7 @@ public class HttpRequest implements IHttpRequest {
 		if (status.length != 3)
 			return;
 		requestType = HttpRequestType.from(status[0]);
-		queryString = status[1];
+		queryString = status[1].trim().isEmpty() ? null : status[1].trim();
 		versionString = status[2];
 
 		int firstIdx;
