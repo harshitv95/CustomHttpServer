@@ -1,5 +1,7 @@
 package com.hvadoda1.util;
 
+import com.hvadoda1.server.http.Config;
+
 public class ThreadPool {
 
 	private final int maxNumThreads;
@@ -63,6 +65,7 @@ public class ThreadPool {
 		public ServerThread(int id, Runnable r) {
 			super(r);
 			this.threadId = id;
+			setName(Config.getServerName() + ":" + threadId);
 		}
 	}
 }

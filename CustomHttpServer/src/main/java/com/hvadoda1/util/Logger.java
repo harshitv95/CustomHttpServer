@@ -25,6 +25,7 @@ public class Logger implements AutoCloseable {
 	protected final Set<Level> logtoFileForLevel;
 	protected final FileWriter fw;
 	protected final String basePackageName;
+	protected final boolean detailsOnConsole;
 
 	/**
 	 * Initializes the logger with the provided level and log file. Call this
@@ -52,11 +53,13 @@ public class Logger implements AutoCloseable {
 	 *                          parameter, all the logs are printed to the console.
 	 * @throws IOException
 	 */
-	public Logger(Level level, String logFile, Level... logtoFileForLevel) throws IOException {
+	public Logger(Level level, String logFile, boolean detailsOnConsole, Level... logtoFileForLevel)
+			throws IOException {
 		if (instance != null)
 			throw new RuntimeException("Logger already initialized, cannot initialize it again");
 		this.level = level != null ? level : Level.INFO;
 		this.fw = new FileWriter(logFile);
+		this.detailsOnConsole = detailsOnConsole;
 		this.logtoFileForLevel = new HashSet<>(Arrays.asList(
 				(logtoFileForLevel == null || logtoFileForLevel.length == 0) ? Level.values() : logtoFileForLevel));
 		basePackageName = this.getClass().getPackageName().split("\\.")[0];
@@ -78,17 +81,15 @@ public class Logger implements AutoCloseable {
 	}
 
 	public void log(Level level, String msg, Object... args) {
-		String caller = getCaller();
 		if (shouldPrintLevel(level)) {
-			String logMsg = (String.format("[%s][%s][%s] %s %s", new Date(), level, caller != null ? caller : "-", msg,
-					printAll(args))).trim();
+			String logMsgPrefix = logMessagePrefix(level), logMsg = String.format("%s %s", msg, printAll(args));
 			if (level == Level.ERROR)
-				System.err.println(logMsg);
+				System.err.println(logMsgPrefix + logMsg);
 			else
-				System.out.println(logMsg);
+				System.out.println((this.detailsOnConsole ? logMsgPrefix : "") + logMsg);
 			if (this.logtoFileForLevel == null || this.logtoFileForLevel.contains(level)) {
 				try {
-					this.fw.write(logMsg + "\n");
+					this.fw.write(logMsgPrefix + logMsg + System.lineSeparator());
 					this.fw.flush();
 				} catch (IOException e) {
 					System.err.println("Failed to write to log file");
@@ -102,6 +103,12 @@ public class Logger implements AutoCloseable {
 		return level == Level.ERROR || (this.level.toInt() < classLevelStarts.toInt())
 				? level.toInt() <= this.level.toInt()
 				: level.toInt() == this.level.toInt();
+	}
+
+	protected String logMessagePrefix(Level level) {
+		String caller = getCaller();
+		return String.format("[%s][%s][%s][%s] ", new Date(), level, caller != null ? caller : "-",
+				Thread.currentThread().getName());
 	}
 
 	protected String printAll(Object[] args) {

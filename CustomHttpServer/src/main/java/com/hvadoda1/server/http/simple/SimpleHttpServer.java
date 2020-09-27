@@ -11,6 +11,8 @@ import com.hvadoda1.server.http.IHttpServerListener;
 
 public class SimpleHttpServer extends HttpServer {
 
+	protected long waitMillis = 0;
+
 	public SimpleHttpServer(String serverName, int maxNumThreads) throws IOException {
 		super(serverName, maxNumThreads);
 		registerListener();
@@ -19,6 +21,10 @@ public class SimpleHttpServer extends HttpServer {
 	public SimpleHttpServer(String serverName) throws IOException {
 		super(serverName);
 		registerListener();
+	}
+
+	public void waitBeforeResponse(long millis) {
+		this.waitMillis = millis < 1 ? 0 : millis;
 	}
 
 	protected void registerListener() {
@@ -44,6 +50,17 @@ public class SimpleHttpServer extends HttpServer {
 			throws IOException {
 		response.setVersionString(request.getVersionString());
 		response.respondWithFile(request.getQueryString());
+	}
+
+	@Override
+	protected void requestPreprocess(IClientMeta<Socket> client, IHttpRequest request, IHttpResponse response) {
+		if (waitMillis > 0)
+			try {
+				Thread.sleep(10000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		super.requestPreprocess(client, request, response);
 	}
 
 }

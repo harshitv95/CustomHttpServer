@@ -41,8 +41,10 @@ public abstract class AbstractServer<CLIENT, CLMETA extends IClientMeta<CLIENT>,
 	protected void onRequest(CLMETA client, REQ request, RESP response) throws InterruptedException, IOException {
 		Logger.debugLow("Calling registered [onRequest] listeners with params:", client, request, response);
 		Runnable r = () -> {
-
 			try {
+				if (isMultiThreaded)
+					Logger.debugHigh("New thread spawned", Thread.currentThread().getName());
+				requestPreprocess(client, request, response);
 				listeners.forEach(l -> {
 					try {
 						l.onRequest(client, request, response);
@@ -65,6 +67,10 @@ public abstract class AbstractServer<CLIENT, CLMETA extends IClientMeta<CLIENT>,
 			threads.get(r);
 		else
 			r.run();
+	}
+
+	protected void requestPreprocess(CLMETA client, REQ request, RESP response) {
+
 	}
 
 	protected void onRequest(CLMETA client) throws InterruptedException, IOException {

@@ -11,7 +11,6 @@ import java.util.Map;
 
 import com.hvadoda1.server.IClientMeta;
 import com.hvadoda1.server.http.Config;
-import com.hvadoda1.server.http.HttpServer;
 import com.hvadoda1.server.http.IHttpRequest;
 import com.hvadoda1.server.http.IHttpResponse;
 import com.hvadoda1.server.http.IHttpServerListener;
@@ -31,9 +30,15 @@ public class ServerStarter {
 
 		new Config();
 
-		try (HttpServer server = new SimpleHttpServer(argMap.getOrDefault("name", "CustomHttpServer"), -1);
-				Logger log = new Logger(Level.from(Integer.parseInt(argMap.getOrDefault("level", "3"))),
-						"logs" + File.separator + "log_" + (DateTimeUtils.getLogFileNameDateString()) + ".txt");) {
+		String serverName = argMap.getOrDefault("name", "CustomHttpServer");
+		int numThreads = !argMap.containsKey("threads") ? -1 : Integer.parseInt(argMap.get("threads"));
+//		long waitBeforeResponse = !argMap.containsKey("httpdelay") ? 0 : Long.parseLong(argMap.get("httpdelay"));
+
+		Level logLevel = Level.from(Integer.parseInt(argMap.getOrDefault("level", "3")));
+		String logFilename = "logs" + File.separator + "log_" + (DateTimeUtils.getLogFileNameDateString()) + ".txt";
+
+		try (SimpleHttpServer server = new SimpleHttpServer(serverName, numThreads);
+				Logger log = new Logger(logLevel, logFilename, false);) {
 
 			server.registerListener(new IHttpServerListener() {
 
@@ -72,6 +77,9 @@ public class ServerStarter {
 							"Input port number [" + port + "] is already in use, please input a different port number");
 			} else if (!TcpUtils.isPortAvailable(port))
 				port = TcpUtils.getAvailablePort(8080);
+
+			if (argMap.containsKey("httpdelay"))
+				server.waitBeforeResponse(Long.parseLong(argMap.get("httpdelay")));
 
 			server.serve(port);
 		} catch (Exception e) {
