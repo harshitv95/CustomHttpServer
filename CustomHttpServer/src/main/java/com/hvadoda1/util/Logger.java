@@ -1,6 +1,5 @@
 package com.hvadoda1.util;
 
-import java.io.Closeable;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
@@ -17,12 +16,15 @@ import java.util.Set;
  * @author Harshit Vadodaria
  *
  */
-public class Logger implements Closeable {
+public class Logger implements AutoCloseable {
+
+	protected static Level classLevelStarts = Level.SENTENCE_DECORATOR;
 
 	protected static Logger instance = null;
 	protected final Level level;
 	protected final Set<Level> logtoFileForLevel;
 	protected final FileWriter fw;
+	protected final String basePackageName;
 
 	/**
 	 * Initializes the logger with the provided level and log file. Call this
@@ -53,9 +55,14 @@ public class Logger implements Closeable {
 	public Logger(Level level, String logFile, Level... logtoFileForLevel) throws IOException {
 		if (instance != null)
 			throw new RuntimeException("Logger already initialized, cannot initialize it again");
-		this.level = level;
+		this.level = level != null ? level : Level.INFO;
 		this.fw = new FileWriter(logFile);
-		this.logtoFileForLevel = new HashSet<>(Arrays.asList(logtoFileForLevel));
+		this.logtoFileForLevel = new HashSet<>(Arrays.asList(
+				(logtoFileForLevel == null || logtoFileForLevel.length == 0) ? Level.values() : logtoFileForLevel));
+		basePackageName = this.getClass().getPackageName().split("\\.")[0];
+		if (level == null)
+			Logger.warn("Invalid Log Level value provided, defaulting to level INFO");
+
 		Logger.instance = this;
 	}
 
@@ -71,9 +78,10 @@ public class Logger implements Closeable {
 	}
 
 	public void log(Level level, String msg, Object... args) {
-		if (level.toInt() <= this.level.toInt()) {
-			String logMsg = (String.format("[%s][%s] %s %s", new Date(), level, msg,
-					(args == null || args.length == 0) ? "" : "(" + (args.length == 1 ? args[0] : args) + ")")).trim();
+		String caller = getCaller();
+		if (shouldPrintLevel(level)) {
+			String logMsg = (String.format("[%s][%s][%s] %s %s", new Date(), level, caller != null ? caller : "-", msg,
+					printAll(args))).trim();
 			if (level == Level.ERROR)
 				System.err.println(logMsg);
 			else
@@ -88,6 +96,25 @@ public class Logger implements Closeable {
 				}
 			}
 		}
+	}
+
+	protected boolean shouldPrintLevel(Level level) {
+		return level == Level.ERROR || (this.level.toInt() < classLevelStarts.toInt())
+				? level.toInt() <= this.level.toInt()
+				: level.toInt() == this.level.toInt();
+	}
+
+	protected String printAll(Object[] args) {
+		if (args == null || args.length == 0)
+			return "";
+		if (args.length == 1)
+			return args[0].toString();
+		StringBuilder sb = new StringBuilder("(");
+		for (Object o : args)
+			sb.append(o).append(", ");
+		if (sb.length() > 0)
+			sb.delete(sb.length() - 2, sb.length());
+		return sb.append(')').toString();
 	}
 
 	public static void debugHigh(String msg, Object... args) {
@@ -120,6 +147,16 @@ public class Logger implements Closeable {
 			t.printStackTrace();
 	}
 
+	protected String getCaller() {
+		if (basePackageName == null || basePackageName.trim().equals(""))
+			return null;
+		for (StackTraceElement st : Thread.currentThread().getStackTrace())
+			if (!st.getClassName().equals(this.getClass().getName())
+					&& st.getClassName().split("\\.")[0].equals(basePackageName))
+				return st.getClassName() + "." + st.getMethodName() + ":" + st.getLineNumber();
+		return null;
+	}
+
 	public void close() {
 		try {
 			if (this.fw != null)
@@ -134,7 +171,10 @@ public class Logger implements Closeable {
 	}
 
 	public static enum Level {
-		ERROR(1), WARN(2), INFO(3), CONFIG(4), DEBUG_LOW(5), DEBUG_MED(6), DEBUG_HIGH(7),;
+		NONE(0), ERROR(1), WARN(2), INFO(3), CONFIG(4), DEBUG_LOW(5), DEBUG_MED(6), DEBUG_HIGH(7),
+
+		// Class Level Logging (for Decorators, Specific to this Project):
+		SENTENCE_DECORATOR(8), KEYWORD_DECORATOR(9), SPELLCHECK_DECORATOR(10), MOST_FREQUENT_WORD_DECORATOR(11);
 
 		private final int levelNum;
 
@@ -150,7 +190,8 @@ public class Logger implements Closeable {
 			for (Level level : Level.values())
 				if (level.toInt() == levelInt)
 					return level;
-			throw new RuntimeException("Invalid log level number: [" + levelInt + "]");
+			return null;
+//			throw new RuntimeException("Invalid log level number: [" + levelInt + "]");
 		}
 	}
 }

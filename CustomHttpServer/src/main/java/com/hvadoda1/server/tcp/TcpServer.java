@@ -8,6 +8,7 @@ import java.net.Socket;
 import com.hvadoda1.server.AbstractServer;
 import com.hvadoda1.server.Config;
 import com.hvadoda1.server.IServerListener;
+import com.hvadoda1.util.Logger;
 
 public class TcpServer extends
 		AbstractServer<Socket, TcpClientMeta, IServerListener<Socket, TcpClientMeta, TcpRequest, TcpResponse>, TcpRequest, TcpResponse> {
@@ -34,6 +35,7 @@ public class TcpServer extends
 		onStart();
 		while (true) {
 			client = server.accept();
+			Logger.debugLow("New client", client.getInetAddress().getHostName());
 			onRequest(createClientMeta(client));
 		}
 	}
@@ -46,6 +48,7 @@ public class TcpServer extends
 
 	@Override
 	protected TcpClientMeta createClientMeta(Socket c) {
+		Logger.debugHigh("Creating metadata object for client", c.getInetAddress().getHostName());
 		return new TcpClientMeta(c);
 	}
 

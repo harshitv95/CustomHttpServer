@@ -6,6 +6,7 @@ import java.util.function.Function;
 
 import com.hvadoda1.server.IRequest;
 import com.hvadoda1.server.util.TcpUtils;
+import com.hvadoda1.util.Logger;
 
 public class TcpRequest implements IRequest {
 	final Socket client;
@@ -16,13 +17,16 @@ public class TcpRequest implements IRequest {
 	}
 
 	public TcpRequest(final Socket client, Function<String, Boolean> msgTerminatorFn) {
+		Logger.debugHigh("Init TcpRequest", client.getInetAddress().getHostName());
 		this.client = client;
 		this.terminator = msgTerminatorFn;
 	}
 
 	@Override
 	public String readMessage() throws IOException {
-		return TcpUtils.readMessage(client, terminator);
+		String ret = TcpUtils.readMessage(client, terminator);
+		Logger.debugHigh("Read TCP message", ret);
+		return ret;
 	}
 
 }
