@@ -59,9 +59,9 @@ public class ServerStarter {
 				@Override
 				public void onRequest(IClientMeta<Socket> client, IHttpRequest request, IHttpResponse response)
 						throws InterruptedException, IOException {
-					resReqCount.put(request.getQueryString(),
-							resReqCount.getOrDefault(request.getQueryString(), 0) + 1);
-					int count = resReqCount.get(request.getQueryString());
+					String resource = request.getRequestedResource();
+					resReqCount.put(resource, resReqCount.getOrDefault(resource, 0) + 1);
+					int count = resReqCount.get(resource);
 
 					Logger.info(request.getQueryString() + "|" + client.getInetAddress().getHostAddress() + "|"
 							+ client.getClient().getPort() + "|" + count);

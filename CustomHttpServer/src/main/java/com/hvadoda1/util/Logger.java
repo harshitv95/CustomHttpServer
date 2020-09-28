@@ -80,7 +80,7 @@ public class Logger implements AutoCloseable {
 
 	public void log(Level level, String msg, Object... args) {
 		if (shouldPrintLevel(level)) {
-			String logMsgPrefix = logMessagePrefix(level), logMsg = String.format("%s %s", msg, printAll(args));
+			String logMsgPrefix = logMessagePrefix(level), logMsg = String.format("%s %s", msg, printAll(args)).trim();
 			if (level == Level.ERROR)
 				System.err.println(logMsgPrefix + logMsg);
 			else

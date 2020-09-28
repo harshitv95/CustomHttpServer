@@ -14,7 +14,7 @@ public class MimeWriterFactory {
 	}
 
 	private static IMimeWriter initialize(String mimeType) {
-		switch (mimeType.split("/")[0]) {
+//		switch (mimeType.split("/")[0]) {
 //		case "text":
 //			return new TextMimeWriter();
 //		case "image":
@@ -22,9 +22,9 @@ public class MimeWriterFactory {
 //		case "video":
 //			return new DataMimeWriter();
 
-		default:
+//		default:
 			return new DataMimeWriter();
 //			throw new IllegalArgumentException("Unexpected value: " + mimeType);
-		}
+//		}
 	}
 }

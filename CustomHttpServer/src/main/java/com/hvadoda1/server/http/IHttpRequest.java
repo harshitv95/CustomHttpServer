@@ -13,5 +13,9 @@ public interface IHttpRequest extends IRequest {
 
 	String getVersionString();
 
+	String getRequestedResource();
+
+	String getSearchString();
+
 	HttpRequestType getRequestType();
 }

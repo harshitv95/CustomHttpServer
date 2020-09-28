@@ -49,7 +49,7 @@ public class SimpleHttpServer extends HttpServer {
 	protected void processHttpRequest(IClientMeta<Socket> client, IHttpRequest request, IHttpResponse response)
 			throws IOException {
 		response.setVersionString(request.getVersionString());
-		response.respondWithFile(request.getQueryString());
+		response.respondWithFile(request.getRequestedResource());
 	}
 
 	@Override

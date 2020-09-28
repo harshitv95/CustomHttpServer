@@ -2,6 +2,8 @@ package com.hvadoda1.server.http;
 
 import java.io.IOException;
 import java.net.Socket;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -13,14 +15,14 @@ public class HttpRequest implements IHttpRequest {
 
 	protected final Map<String, String> headers;
 	protected HttpRequestType requestType;
-	protected String queryString = null, versionString;
+	protected String queryString = null, versionString, searchString, requestedResource;
 	protected final Socket client;
 	protected final Function<String, Boolean> terminatorFn = (line) -> line == null || line.trim().isEmpty();
 
 	public HttpRequest(IClientMeta<Socket> client) throws IOException {
 		this(client.getClient());
 	}
-	
+
 	public HttpRequest(Socket client) throws IOException {
 		this(client, new HashMap<>());
 	}
@@ -43,8 +45,13 @@ public class HttpRequest implements IHttpRequest {
 		if (status.length != 3)
 			return;
 		requestType = HttpRequestType.from(status[0]);
-		queryString = status[1].trim().isEmpty() ? null : status[1].trim();
+		queryString = status[1].isEmpty() ? null : status[1];
+		queryString = URLDecoder.decode(queryString, StandardCharsets.UTF_8).trim();
 		versionString = status[2];
+
+		status = queryString.split("\\?", 2);
+		requestedResource = status[0];
+		searchString = (status.length == 1) ? "" : status[1].trim();
 
 		int firstIdx;
 
@@ -88,6 +95,16 @@ public class HttpRequest implements IHttpRequest {
 	@Override
 	public HttpRequestType getRequestType() {
 		return this.requestType;
+	}
+
+	@Override
+	public String getRequestedResource() {
+		return this.requestedResource;
+	}
+
+	@Override
+	public String getSearchString() {
+		return this.searchString;
 	}
 
 }
