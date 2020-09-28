@@ -16,7 +16,11 @@ The server needs a directory `www/` in the execution directory, and this directo
 > Needs 'Java' 8+ installed
 1. To ***compile*** the server, execute the script *server.sh*: `./server.sh`
 
-	(If you get a permissions error, you can fix it by adding execute permissions for the current user: `chmod +700 server.sh` )
+	(If you get a permissions error, you can fix it by adding execute permissions for the current user:
+	
+	`chmod +700 server.sh`
+	
+	)
 
 	This will create an executable *server.jar*
 2.  To ***run*** this executable:
