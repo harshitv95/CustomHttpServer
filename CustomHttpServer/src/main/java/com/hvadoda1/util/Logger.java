@@ -18,8 +18,6 @@ import java.util.Set;
  */
 public class Logger implements AutoCloseable {
 
-	protected static Level classLevelStarts = Level.SENTENCE_DECORATOR;
-
 	protected static Logger instance = null;
 	protected final Level level;
 	protected final Set<Level> logtoFileForLevel;
@@ -100,9 +98,7 @@ public class Logger implements AutoCloseable {
 	}
 
 	protected boolean shouldPrintLevel(Level level) {
-		return level == Level.ERROR || (this.level.toInt() < classLevelStarts.toInt())
-				? level.toInt() <= this.level.toInt()
-				: level.toInt() == this.level.toInt();
+		return level == Level.ERROR || level.toInt() <= this.level.toInt();
 	}
 
 	protected String logMessagePrefix(Level level) {
@@ -178,10 +174,7 @@ public class Logger implements AutoCloseable {
 	}
 
 	public static enum Level {
-		NONE(0), ERROR(1), WARN(2), INFO(3), CONFIG(4), DEBUG_LOW(5), DEBUG_MED(6), DEBUG_HIGH(7),
-
-		// Class Level Logging (for Decorators, Specific to this Project):
-		SENTENCE_DECORATOR(8), KEYWORD_DECORATOR(9), SPELLCHECK_DECORATOR(10), MOST_FREQUENT_WORD_DECORATOR(11);
+		NONE(0), ERROR(1), WARN(2), INFO(3), CONFIG(4), DEBUG_LOW(5), DEBUG_MED(6), DEBUG_HIGH(7),;
 
 		private final int levelNum;
 

@@ -79,7 +79,7 @@ public class ServerStarter {
 				port = TcpUtils.getAvailablePort(8080);
 
 			if (argMap.containsKey("httpdelay"))
-				server.waitBeforeResponse(Long.parseLong(argMap.get("httpdelay")));
+				server.waitBeforeResponse(Long.parseLong(argMap.get("httpdelay")) * 1000);
 
 			server.serve(port);
 		} catch (Exception e) {
