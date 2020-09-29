@@ -23,10 +23,16 @@ import com.hvadoda1.util.Logger.Level;
 
 public class ServerStarter {
 
+	Map<String, Integer> resReqCount = new HashMap<String, Integer>();
+
 	public static void main(String[] args) throws IOException, InterruptedException {
 
 		Map<String, String> argMap = CommonUtils.parseArgsMap(args);
-		Map<String, Integer> resReqCount = new HashMap<String, Integer>();
+
+		new ServerStarter().startServer(argMap);
+	}
+
+	public void startServer(Map<String, String> argMap) {
 
 		new Config();
 
@@ -60,9 +66,11 @@ public class ServerStarter {
 				public void onRequest(IClientMeta<Socket> client, IHttpRequest request, IHttpResponse response)
 						throws InterruptedException, IOException {
 					String resource = request.getRequestedResource();
-					resReqCount.put(resource, resReqCount.getOrDefault(resource, 0) + 1);
-					int count = resReqCount.get(resource);
-
+					int count;
+					synchronized (resReqCount) {
+						resReqCount.put(resource, resReqCount.getOrDefault(resource, 0) + 1);
+						count = resReqCount.get(resource);
+					}
 					Logger.info(request.getQueryString() + "|" + client.getInetAddress().getHostAddress() + "|"
 							+ client.getClient().getPort() + "|" + count);
 				}
@@ -85,7 +93,6 @@ public class ServerStarter {
 		} catch (Exception e) {
 			Logger.error("Exception while serving", e);
 		}
-
 	}
 
 }

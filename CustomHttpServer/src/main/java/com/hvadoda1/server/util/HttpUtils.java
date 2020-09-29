@@ -34,8 +34,19 @@ public class HttpUtils {
 		}
 	};
 
-	public static final boolean isHeaderForbidden(String name) {
+	public static boolean isHeaderForbidden(String name) {
 		name = name.toLowerCase();
 		return name.startsWith("proxy-") || name.startsWith("sec-") || forbiddenHeaderNames.contains(name);
-	};
+	}
+	
+	public static String error404ResponseHTML(String requestedResource) {
+		return "<h1>Not Found</h1><h3>The requested resource \"" + requestedResource
+				+ "\" was not found on this server</h3>";
+	}
+	
+	public static String error403ResponseHTML(String requestedResource) {
+		return "<h1>Forbidden</h1><h3>You do not have access to this resource</h3>";
+	}
+	
+	
 }

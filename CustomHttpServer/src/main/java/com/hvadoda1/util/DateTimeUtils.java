@@ -17,7 +17,7 @@ public class DateTimeUtils {
 		return logFileNameFormat.format(new Date());
 	}
 
-	public static String getServerTimeString() {
-		return httpHeaderDateFormat.format(new Date());
+	public static String getServerTimeString(Date d) {
+		return httpHeaderDateFormat.format(d);
 	}
 }

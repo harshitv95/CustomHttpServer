@@ -3,6 +3,7 @@ package com.hvadoda1.server.http;
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +23,8 @@ public class HttpResponse extends TcpResponse implements IHttpResponse {
 	protected HttpStatus status = HttpStatus.HTTP_200;
 
 	protected String versionString;
+
+	protected boolean headersSent = false;
 
 	public HttpResponse(Socket client) throws IOException {
 		super(client);
@@ -74,8 +77,11 @@ public class HttpResponse extends TcpResponse implements IHttpResponse {
 
 	@Override
 	public void sendHeaders() {
-		headers.put("Date", DateTimeUtils.getServerTimeString());
+		if (this.headersSent)
+			throw new RuntimeException("Headers already sent, cannot send again");
+		headers.put("Date", DateTimeUtils.getServerTimeString(new Date()));
 		writeMessage(responseHeaderString());
+		this.headersSent = true;
 	}
 
 	@Override
@@ -94,19 +100,19 @@ public class HttpResponse extends TcpResponse implements IHttpResponse {
 		if (!servedFile.exists() || !servedFile.isFile()) {
 			setStatus(HttpStatus.HTTP_404);
 			setHeader("Content-Type", "text/html");
-			sendResponse("<h1>Not Found</h1><h3>The requested resource \"" + servedFileName
-					+ "\" was not found on this server</h3>");
+			sendResponse(HttpUtils.error404ResponseHTML(servedFileName));
 			return;
 		}
 		if (!servedFile.canRead()) {
 			setStatus(HttpStatus.HTTP_403);
-			sendResponse("");
+			sendResponse(HttpUtils.error403ResponseHTML(servedFileName));
 			return;
 		}
 
 		setStatus(HttpStatus.HTTP_200);
 		setHeader("Content-Type", MimeUtils.getMimeType(servedFile));
 		headers.put("Content-Length", servedFile.length() + "");
+		headers.put("Last-Modified", DateTimeUtils.getServerTimeString(new Date(servedFile.lastModified())));
 		sendHeaders();
 
 		MimeUtils.writeMimeToOutput(servedFile, getOutputStream());
