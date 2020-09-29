@@ -1,5 +1,4 @@
-# CS 557 - Distributed Systems
-### Programming Assignment 1
+# Multi-Threaded Custom HTTP Server
 #### - Harshit Vadodaria
 ---
 An implementation of a Simple Multi-threaded HTTP Server, using TCP Sockets.
